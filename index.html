@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หัวเชื้อ Stock Monitor - Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="css/theme.css?v=1.1">
+</head>
+<body data-page="dashboard">
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-container">
+        <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.39a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+        </svg>
+        <h1>StockFlow</h1>
+      </div>
+      <p>ระบบติดตามหัวเชื้อ</p>
+    </div>
+    <div class="nav">
+      <div class="nav-section">หลัก</div>
+      <a href="index.html" class="nav-item" data-page="dashboard">
+        <span class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM13.5 6a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 012.25-2.25h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z" />
+          </svg>
+        </span>
+        Dashboard
+      </a>
+      <a href="expiry.html" class="nav-item" data-page="expiry">
+        <span class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </span>
+        วันหมดอายุ & Aging
+      </a>
+      <div class="nav-section">บันทึกข้อมูล</div>
+      <a href="entry.html" class="nav-item" data-page="entry">
+        <span class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        </span>
+        บันทึกการรับเข้า
+      </a>
+      <a href="deduct.html" class="nav-item" data-page="deduct">
+        <span class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </span>
+        ตัดจ่าย Stock
+      </a>
+      <a href="history.html" class="nav-item" data-page="history">
+        <span class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </span>
+        ประวัติการตัด Stock
+      </a>
+      <a href="stock.html" class="nav-item" data-page="stock">
+        <span class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+          </svg>
+        </span>
+        ดู Stock ทั้งหมด
+      </a>
+      <div class="nav-section">ข้อมูล</div>
+      <a href="master.html" class="nav-item" data-page="master">
+        <span class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V10.125M3.75 10.125v3.75m16.5-3.75v3.75m-16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125v-3.75m16.5 0v3.75" />
+          </svg>
+        </span>
+        Master วัตถุดิบ
+      </a>
+      <a href="users.html" class="nav-item" data-page="users">
+        <span class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.386 11.386 0 0110.089 18a11.374 11.374 0 01-9.34-4.87M18 10a3 3 0 11-6 0 3 3 0 016 0zm-3 8.25a8.967 8.967 0 01-6 2.25c-2.906 0-5.437-1.377-7.031-3.513A4.125 4.125 0 014.5 14.5h6.22m0 0a4.29 4.29 0 01.082-.875M10.5 14.5a4.23 4.23 0 00.32-1.385M9 7.5a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </span>
+        จัดการผู้ใช้งาน
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <span id="conn-status">⚪ กำลังเชื่อมต่อ...</span>
+    </div>
+  </nav>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <button class="btn btn-ghost btn-sm mobile-menu-btn" onclick="toggleSidebar()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+      <h2 id="page-title">Dashboard</h2>
+      <div class="topbar-right">
+        <span class="badge badge-date" id="today-date"></span>
+        <button class="btn btn-ghost btn-sm" onclick="refreshAll()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+          </svg>
+          รีเฟรช
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="page" id="page-dashboard">
+      <div class="cards-row">
+        <div class="card total" onclick="openKpiDetails('total')">
+          <div class="card-label">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="14" height="14" style="vertical-align: middle; margin-right: 4px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+            </svg>
+            Stock ทั้งหมด
+          </div>
+          <div class="card-value-wrapper">
+            <div class="card-value" id="kpi-total">—</div>
+            <div class="card-chart">
+              <svg width="72" height="24"><polyline points="0,22 12,16.571428571428573 24,8.428571428571429 36,11.142857142857144 48,5.714285714285715 60,3 72,3" fill="none" stroke="#4f46e5" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/></svg>
+            </div>
+          </div>
+          <div class="card-sub">Batch ที่ active</div>
+        </div>
+        <div class="card expired" onclick="openKpiDetails('expired')">
+          <div class="card-label">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="12" height="12" style="vertical-align: middle; margin-right: 4px; color: var(--red);">
+              <circle cx="12" cy="12" r="10"/>
+            </svg>
+            หมดอายุแล้ว
+          </div>
+          <div class="card-value-wrapper">
+            <div class="card-value" id="kpi-expired">—</div>
+            <div class="card-chart">
+              <svg width="72" height="24"><polyline points="0,22 12,15.666666666666668 24,15.666666666666668 36,9.333333333333334 48,9.333333333333334 60,3 72,3" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/></svg>
+            </div>
+          </div>
+          <div class="card-sub">ต้องดำเนินการด่วน</div>
+        </div>
+        <div class="card critical" onclick="openKpiDetails('critical')">
+          <div class="card-label">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="12" height="12" style="vertical-align: middle; margin-right: 4px; color: var(--orange);">
+              <circle cx="12" cy="12" r="10"/>
+            </svg>
+            ≤ 30 วัน
+          </div>
+          <div class="card-value-wrapper">
+            <div class="card-value" id="kpi-critical">—</div>
+            <div class="card-chart">
+              <svg width="72" height="24"><polyline points="0,22 12,17.25 24,12.5 36,7.75 48,3 60,3 72,3" fill="none" stroke="#ea580c" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/></svg>
+            </div>
+          </div>
+          <div class="card-sub">ใกล้หมดอายุมาก</div>
+        </div>
+        <div class="card warning" onclick="openKpiDetails('warning')">
+          <div class="card-label">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="12" height="12" style="vertical-align: middle; margin-right: 4px; color: var(--yellow);">
+              <circle cx="12" cy="12" r="10"/>
+            </svg>
+            31–60 วัน
+          </div>
+          <div class="card-value-wrapper">
+            <div class="card-value" id="kpi-warning">—</div>
+            <div class="card-chart">
+              <svg width="72" height="24"><polyline points="0,9.333333333333334 12,15.666666666666668 24,9.333333333333334 36,9.333333333333334 48,3 60,3 72,22" fill="none" stroke="#d97706" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/></svg>
+            </div>
+          </div>
+          <div class="card-sub">ควรติดตาม</div>
+        </div>
+        <div class="card ok" onclick="openKpiDetails('ok')">
+          <div class="card-label">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="12" height="12" style="vertical-align: middle; margin-right: 4px; color: var(--green);">
+              <circle cx="12" cy="12" r="10"/>
+            </svg>
+            ปกติ (>60 วัน)
+          </div>
+          <div class="card-value-wrapper">
+            <div class="card-value" id="kpi-ok">—</div>
+            <div class="card-chart">
+              <svg width="72" height="24"><polyline points="0,15.666666666666668 12,9.333333333333334 24,3 36,22 48,22 60,22 72,3" fill="none" stroke="#10b981" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/></svg>
+            </div>
+          </div>
+          <div class="card-sub">เกิน 60 วัน</div>
+        </div>
+      </div>
+
+      <!-- Urgent alerts -->
+      <div id="alerts-container" style="margin-bottom:20px;"></div>
+
+      <div class="dashboard-grid">
+        <!-- Left column container -->
+        <div style="display: flex; flex-direction: column; gap: 24px; min-width: 0;">
+          <!-- Recent entries table -->
+          <div class="table-wrapper">
+            <div class="table-header">
+              <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                รายการที่ต้องดูแล (หมดอายุ / ≤ 60 วัน)
+              </h3>
+              <a class="btn btn-ghost btn-sm" href="expiry.html" style="text-decoration: none;">ดูทั้งหมด →</a>
+            </div>
+            <div class="table-scroll">
+              <table id="dash-table">
+                <thead>
+                  <tr>
+                    <th>สถานะ</th>
+                    <th>Code</th>
+                    <th>ชื่อ</th>
+                    <th>กลุ่ม</th>
+                    <th>Batch</th>
+                    <th>วันที่เหลือ</th>
+                    <th>จำนวน</th>
+                  </tr>
+                </thead>
+                <tbody id="dash-tbody">
+                  <tr><td colspan="7" class="loading"><div class="spinner"></div> กำลังโหลด...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Insights Section -->
+          <div class="insights-grid">
+            <!-- Card 1: Product Group Risk Analysis -->
+            <div class="card">
+              <div class="table-header" style="padding: 0 0 12px 0; margin-bottom: 12px; border-bottom: 1px solid var(--border);">
+                <h3 style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted);">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16" style="color: var(--accent);">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                  </svg>
+                  กลุ่มผลิตภัณฑ์ที่มีความเสี่ยงสูง (Product Group Risk)
+                </h3>
+              </div>
+              <div id="group-risk-list">
+                <div class="loading" style="padding: 20px;"><div class="spinner"></div> กำลังโหลด...</div>
+              </div>
+            </div>
+
+            <!-- Card 2: Stock Aging Distribution -->
+            <div class="card">
+              <div class="table-header" style="padding: 0 0 12px 0; margin-bottom: 12px; border-bottom: 1px solid var(--border);">
+                <h3 style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted);">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16" style="color: var(--yellow);">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  ภาพรวมระยะเวลาการจัดเก็บ (Stock Aging Distribution)
+                </h3>
+              </div>
+              <div class="aging-distribution-container" style="display: flex; flex-direction: column; gap: 14px; padding: 6px 0;">
+                <div class="aging-dist-item">
+                  <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; font-weight:600;">
+                    <span>เก็บสะสมนานกว่า 6 เดือน (&gt; 6M)</span>
+                    <span id="aging-dist-gt6" style="font-family: var(--mono); color: var(--red);">0 รายการ</span>
+                  </div>
+                  <div style="width:100%; height:8px; background:var(--surface2); border-radius:4px; overflow:hidden;">
+                    <div id="aging-bar-gt6" style="height:100%; background:var(--red); width:0%; transition:width 0.4s ease;"></div>
+                  </div>
+                </div>
+                <div class="aging-dist-item">
+                  <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; font-weight:600;">
+                    <span>เก็บสะสม 3 - 6 เดือน (3–6M)</span>
+                    <span id="aging-dist-m36" style="font-family: var(--mono); color: var(--yellow);">0 รายการ</span>
+                  </div>
+                  <div style="width:100%; height:8px; background:var(--surface2); border-radius:4px; overflow:hidden;">
+                    <div id="aging-bar-m36" style="height:100%; background:var(--yellow); width:0%; transition:width 0.4s ease;"></div>
+                  </div>
+                </div>
+                <div class="aging-dist-item">
+                  <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; font-weight:600;">
+                    <span>เก็บสะสมใหม่ต่ำกว่า 3 เดือน (&lt; 3M)</span>
+                    <span id="aging-dist-lt3" style="font-family: var(--mono); color: var(--green);">0 รายการ</span>
+                  </div>
+                  <div style="width:100%; height:8px; background:var(--surface2); border-radius:4px; overflow:hidden;">
+                    <div id="aging-bar-lt3" style="height:100%; background:var(--green); width:0%; transition:width 0.4s ease;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar analytics (Right column) -->
+        <div class="sidebar-cards">
+          <!-- Donut chart -->
+          <div class="card">
+            <div class="card-label">สถานะ Stock</div>
+            <div class="donut-container">
+              <div class="donut-chart">
+                <div class="donut-inner">
+                  <div class="donut-value" id="donut-total">—</div>
+                  <div class="donut-label">Batches</div>
+                </div>
+              </div>
+              <div class="donut-legend">
+                <div class="legend-item">
+                  <span class="status-dot dot-expired"></span> หมดอายุ
+                  <span class="legend-count" id="legend-expired">—</span>
+                </div>
+                <div class="legend-item">
+                  <span class="status-dot dot-critical"></span> ≤ 30 วัน
+                  <span class="legend-count" id="legend-critical">—</span>
+                </div>
+                <div class="legend-item">
+                  <span class="status-dot dot-warning"></span> 31-60 วัน
+                  <span class="legend-count" id="legend-warning">—</span>
+                </div>
+                <div class="legend-item">
+                  <span class="status-dot dot-ok"></span> ปกติ
+                  <span class="legend-count" id="legend-ok">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quantity Analysis Section -->
+          <div style="margin-top: 12px; margin-bottom: -12px;">
+            <h3 style="font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin: 0; color: var(--text);">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16" style="color: var(--accent);">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm0 6a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm0 6a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm9.75-12a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h7.5a.75.75 0 00.75-.75zm0 6a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h7.5a.75.75 0 00.75-.75zm0 6a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h7.5a.75.75 0 00.75-.75z" />
+              </svg>
+              วิเคราะห์ปริมาณวัตถุดิบ
+            </h3>
+            <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--muted); font-weight: 500;">
+              <span>คงคลังรวม: <strong id="qty-total-sum" style="color: var(--text); font-family: var(--mono);">—</strong></span>
+              <span>รหัสสินค้า: <strong id="qty-total-items" style="color: var(--text); font-family: var(--mono);">—</strong> รายการ</span>
+            </div>
+          </div>
+
+          <!-- Top 5 Max Quantity Card -->
+          <div class="card">
+            <div class="table-header" style="padding: 0 0 12px 0; margin-bottom: 12px; border-bottom: 1px solid var(--border);">
+              <h3 style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted);">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16" style="color: #6366f1;">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                </svg>
+                วัตถุดิบคงคลังสูงสุด 5 อันดับแรก
+              </h3>
+            </div>
+            <div id="qty-max-list">
+              <div class="loading" style="padding: 20px;"><div class="spinner"></div> กำลังโหลด...</div>
+            </div>
+          </div>
+
+          <!-- Top 5 Min Quantity Card -->
+          <div class="card">
+            <div class="table-header" style="padding: 0 0 12px 0; margin-bottom: 12px; border-bottom: 1px solid var(--border);">
+              <h3 style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted);">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16" style="color: #f97316;">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6L9 12.75l4.286-4.286a11.948 11.948 0 014.306 6.43l.776 2.898m0 0l3.182-5.511m-3.182 5.511l-5.511-3.182" />
+                </svg>
+                วัตถุดิบคงคลังเหลือน้อย 5 อันดับแรก
+              </h3>
+            </div>
+            <div id="qty-min-list">
+              <div class="loading" style="padding: 20px;"><div class="spinner"></div> กำลังโหลด...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </main>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+        </svg>
+        แก้ไข Stock Entry
+      </h3>
+      <span class="modal-close" onclick="closeModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </span>
+    </div>
+    <div class="form-grid" id="modal-form"></div>
+    <div style="margin-top:20px;display:flex;gap:10px;">
+      <button class="btn btn-primary" onclick="updateEntry()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        บันทึก
+      </button>
+      <button class="btn btn-danger" onclick="deleteEntry()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+        </svg>
+        ลบ
+      </button>
+      <button class="btn btn-ghost" onclick="closeModal()">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<!-- KPI Details Modal -->
+<div class="modal-overlay" id="kpi-modal">
+  <div class="modal" style="width: 800px; max-width: 95vw;">
+    <div class="modal-header">
+      <h3 id="kpi-modal-title">รายละเอียดวัตถุดิบ</h3>
+      <span class="modal-close" onclick="closeKpiModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </span>
+    </div>
+    <div class="table-scroll" style="max-height: 60vh;">
+      <table>
+        <thead>
+          <tr>
+            <th>สถานะ</th>
+            <th>Code</th>
+            <th>ชื่อวัตถุดิบ</th>
+            <th>กลุ่ม</th>
+            <th>Batch</th>
+            <th>วันที่เหลือ</th>
+            <th>จำนวน</th>
+          </tr>
+        </thead>
+        <tbody id="kpi-modal-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>

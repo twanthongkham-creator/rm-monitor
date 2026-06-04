@@ -1,0 +1,29 @@
+# ===== DATA FILES (ไม่ push ข้อมูลธุรกิจ) =====
+*.xlsx
+*.xls
+*.csv
+
+# ===== PYTHON SCRIPTS (ใช้งาน local เท่านั้น) =====
+*.py
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# ===== DESIGN DRAFTS =====
+Design_*.html
+dashboard.html
+
+# ===== INTERNAL DOCS =====
+requirements/
+
+# ===== OS FILES =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.suo
+*.user
